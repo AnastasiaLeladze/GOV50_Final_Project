@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-2-1.png","index_files/figure-html5/unnamed-chunk-4-1.png","index_files/figure-html5/unnamed-chunk-5-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","Project_Data/01_Earnings_annual.xls","Project_Data/31-net-migration.xlsx","Project_Data/By_ownership_Type.xlsx","Project_Data/consumer-price-index-2010=100.xlsx","Project_Data/CPI_2010_base.xls","Project_Data/Foreign_direct_investment.xls","Project_Data/GDP-growth-annual.xls","Project_Data/GDP_current_dollars.xls","Project_Data/GDP_per_capita.xls","Project_Data/Inflation_consumer_prices.xls","Project_Data/Migration_citizenship_sex.xlsx","Project_Data/Personal_transfers.xls"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1520,10 +1520,147 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <h2 id="project-thoughts">Project thoughts</h2>
 <p>How did new migration patterns caused by the Russo-Ukrainian war affect inflation in Georgia? In this project, I will be exploring how the increased number of Russian immigrants affected Georgian economy, and especially the inflation rate. From what I have observed in the country, the prices rose greatly while the government proudly publicized the 10% growth rate. I believe that Russians, trying to escape the economic sanctions, brought a lot of cash to Georgia and bought the local currency, Lari. This made Lari stronger compared to the dollar which seemed a positive dynamic. The increased amount of cash in the country did result in some kind of growth, with capital increasing and a new labor force coming into the country, but this stopped at some point. After that, the economy could not catch up with real growth, and more cash circulating resulted in increased prices.</p>
 <p>To check whether this is correct or not, I will need to look at exactly what the immigration patterns (independent variable) and how inflation rates over time responded to them (dependent variable). For both, I will rely on not only Georgian but also international statistical sources - mostly, “Geostats” and the World Bank. The outcome of our interest will be the change in the inflation rates caused by the migration. If my hypothesis is correct, the data will show that the inflation rate significantly increased with the amount of migrational inflow; if I am wrong, the numbers will show inflation’s independence from migration or it is decreasing over time. While this seems a simple comparison, it will be very hard to account for the confounders in the economy, which usually exist in large numbers while dealing with unpredictable developing economies.</p>
-<p><a href="https://www.geostat.ge/ka/modules/categories/26/samomkhmareblo-fasebis-indeksi-inflatsia" class="uri">https://www.geostat.ge/ka/modules/categories/26/samomkhmareblo-fasebis-indeksi-inflatsia</a>
-<a href="https://www.geostat.ge/ka/modules/categories/316/mosakhleoba-da-demografia" class="uri">https://www.geostat.ge/ka/modules/categories/316/mosakhleoba-da-demografia</a>
-<a href="https://data.worldbank.org/indicator/FP.CPI.TOTL.ZG?locations=GE" class="uri">https://data.worldbank.org/indicator/FP.CPI.TOTL.ZG?locations=GE</a></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h2 id="loading-all-the-datasets">Loading all the datasets</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
+<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span></span>
+<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://readxl.tidyverse.org'>readxl</a></span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>GDP_per_capita</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/GDP_per_capita.xls"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Nominal_avg_earnings</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/01_Earnings_annual.xls"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Net_migration</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/31-net-migration.xlsx"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Migration_citizenship_sex</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/Migration_citizenship_sex.xlsx"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>CPI_base_2010_Geostats_monthly</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/consumer-price-index-2010=100.xlsx"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>CPI_base_2010_WorldBank</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/CPI_2010_base.xls"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Foreign_investment</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/Foreign_direct_investment.xls"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>GDP_growth</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/GDP-growth-annual.xls"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Inflation_annual_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/Inflation_consumer_prices.xls"</span><span class='op'>)</span></span></code></pre>
+</div>
+</div>
+<h2 id="visualizing-russian-migration-over-time">Visualizing Russian migration over time</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Migration_citizenship_sex</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Citizenship</span> <span class='op'>==</span> <span class='st'>"Russian Federation"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>Year</span>, <span class='va'>Citizenship</span>, <span class='va'>Immigrants_total</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Year</span>, y <span class='op'>=</span> <span class='va'>Immigrants_total</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
+</div>
+<h2 id="creating-database-with-economic-growth-inflation-rate-and-russian-immigration">Creating database with economic growth, inflation rate, and Russian immigration</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>GDP_growth_GEO</span> <span class='op'>&lt;-</span> <span class='va'>GDP_growth</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>`Country Name`</span> <span class='op'>==</span> <span class='st'>"Georgia"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>`Indicator Name`</span>, <span class='op'>-</span><span class='va'>`Country Name`</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_longer.html'>pivot_longer</a></span><span class='op'>(</span>names_to <span class='op'>=</span> <span class='st'>"Year"</span>,</span>
+<span>               values_to <span class='op'>=</span> <span class='st'>"Annual GDP Growth"</span>,</span>
+<span>               cols <span class='op'>=</span> <span class='op'>-</span><span class='st'>"Country Code"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Inflation_annual_rate_GEO</span> <span class='op'>&lt;-</span> <span class='va'>Inflation_annual_rate</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>`Country Name`</span> <span class='op'>==</span> <span class='st'>"Georgia"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>`Indicator Name`</span>, <span class='op'>-</span><span class='va'>`Country Name`</span><span class='op'>)</span><span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_longer.html'>pivot_longer</a></span><span class='op'>(</span>names_to <span class='op'>=</span> <span class='st'>"Year"</span>,</span>
+<span>               values_to <span class='op'>=</span> <span class='st'>"Inflation Rate"</span>,</span>
+<span>               cols <span class='op'>=</span> <span class='op'>-</span><span class='st'>"Country Code"</span><span class='op'>)</span></span>
+<span></span>
+<span></span>
+<span><span class='co'>## I want to transform `Year` to the class of double, but I can't do it.</span></span>
+<span>  </span>
+<span><span class='va'>Russian_immigration</span> <span class='op'>&lt;-</span> <span class='va'>Migration_citizenship_sex</span><span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Citizenship</span> <span class='op'>==</span> <span class='st'>"Russian Federation"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>Year</span>, <span class='va'>Citizenship</span>, <span class='va'>Immigrants_total</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename</a></span><span class='op'>(</span>Russian_immigrants <span class='op'>=</span> <span class='va'>Immigrants_total</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>Citizenship</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>GDPgrowth_Inflation</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>left_join</a></span><span class='op'>(</span><span class='va'>GDP_growth_GEO</span>, <span class='va'>Inflation_annual_rate_GEO</span>,  by <span class='op'>=</span> <span class='st'>"Year"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='st'>"Country Code.y"</span>, <span class='op'>-</span><span class='st'>"Country Code.x"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='co'>## GDPgrowth_Inflation_Immigration &lt;- left_join(GDPgrowth_Inflation, Russian_immigration, by = "Year", copy = TRUE)</span></span>
+<span></span>
+<span><span class='co'>## I need to do something here, it's not joining</span></span></code></pre>
+</div>
+</div>
+<h2 id="graphing-economic-growth-and-inflation">Graphing economic growth and inflation</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>GDP_growth_GEO_plot</span> <span class='op'>&lt;-</span> <span class='va'>GDP_growth_GEO</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Year</span>, y <span class='op'>=</span> <span class='va'>`Annual GDP Growth`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_col</a></span><span class='op'>(</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Inflation_annual_rate_GEO_plot</span> <span class='op'>&lt;-</span> <span class='va'>Inflation_annual_rate_GEO</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Year</span> <span class='op'>==</span> <span class='fl'>2006</span><span class='op'>:</span><span class='fl'>2022</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Year</span>, y <span class='op'>=</span> <span class='va'>`Inflation Rate`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_col</a></span><span class='op'>(</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Inflation_annual_rate_GEO_plot</span></span></code></pre>
+</div>
+<img src="index_files/figure-html5/unnamed-chunk-4-1.png" width="624" />
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## I would prefer to do this with geom_line() but it is not working for some reason</span></span></code></pre>
+</div>
+</div>
+<h2 id="evaluating-relationship-between-economic-growth-and-russian-immigration">Evaluating relationship between economic growth and Russian immigration</h2>
+<p>Unfortunately, I could not join the datasets for Russian immigration and inflation/economic growth, or I would create their regression. For now, therefore, I will do economic growth-inflation.</p>
+<h2 id="evaluating-relationship-between-inflation-and-economic-growth">Evaluating relationship between inflation and economic growth</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Getting Correlation</span></span>
+<span></span>
+<span><span class='va'>GDPgrowth_Inflation</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>correlation <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>`Inflation Rate`</span>, <span class='va'>`Annual GDP Growth`</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 1 × 1
+  correlation
+        &lt;dbl&gt;
+1       0.486</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Creating Regression</span></span>
+<span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>`Inflation Rate`</span> <span class='op'>~</span> <span class='va'>`Annual GDP Growth`</span>, data <span class='op'>=</span> <span class='va'>GDPgrowth_Inflation</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = `Inflation Rate` ~ `Annual GDP Growth`, data = GDPgrowth_Inflation)
+
+Coefficients:
+        (Intercept)  `Annual GDP Growth`  
+             3.6109               0.3883  </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Visualizing</span></span>
+<span></span>
+<span><span class='va'>GDPgrowth_Inflation</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>`Annual GDP Growth`</span>, y <span class='op'>=</span> <span class='va'>`Inflation Rate`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-5-1.png" width="624" /></p>
+</div>
+<h2 id="evaluating-relationship-between-inflation-and-russian-immigration">Evaluating relationship between inflation and Russian immigration</h2>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<h2 id="notes-for-later">Notes for later</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Avg_migration_by_citizenship</span> <span class='op'>&lt;-</span> <span class='va'>Migration_citizenship_sex</span> <span class='op'>|&gt;</span></span>
+<span>    <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>Year</span>, <span class='va'>Citizenship</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='op'>(</span>mean_immigration <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>Immigrants_total</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_wider.html'>pivot_wider</a></span><span class='op'>(</span>names_from <span class='op'>=</span> <span class='va'>Citizenship</span>,</span>
+<span>              values_from <span class='op'>=</span> <span class='va'>mean_immigration</span><span class='op'>)</span></span></code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

@@ -15,6 +15,148 @@ How did new migration patterns caused by the Russo-Ukrainian war affect inflatio
 
 To check whether this is correct or not, I will need to look at exactly what the immigration patterns (independent variable) and how inflation rates over time responded to them (dependent variable). For both, I will rely on not only Georgian but also international statistical sources - mostly, "Geostats" and the World Bank. The outcome of our interest will be the change in the inflation rates caused by the migration. If my hypothesis is correct, the data will show that the inflation rate significantly increased with the amount of migrational inflow; if I am wrong, the numbers will show inflation's independence from migration or it is decreasing over time. While this seems a simple comparison, it will be very hard to account for the confounders in the economy, which usually exist in large numbers while dealing with unpredictable developing economies.
 
-https://www.geostat.ge/ka/modules/categories/26/samomkhmareblo-fasebis-indeksi-inflatsia
-https://www.geostat.ge/ka/modules/categories/316/mosakhleoba-da-demografia
-https://data.worldbank.org/indicator/FP.CPI.TOTL.ZG?locations=GE
+## Loading all the datasets
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(readxl)
+
+GDP_per_capita <- read_excel("Project_Data/GDP_per_capita.xls")
+
+Nominal_avg_earnings <- read_excel("Project_Data/01_Earnings_annual.xls")
+
+Net_migration <- read_excel("Project_Data/31-net-migration.xlsx")
+
+Migration_citizenship_sex <- read_excel("Project_Data/Migration_citizenship_sex.xlsx")
+
+CPI_base_2010_Geostats_monthly <- read_excel("Project_Data/consumer-price-index-2010=100.xlsx")
+
+CPI_base_2010_WorldBank <- read_excel("Project_Data/CPI_2010_base.xls")
+
+Foreign_investment <- read_excel("Project_Data/Foreign_direct_investment.xls")
+
+GDP_growth <- read_excel("Project_Data/GDP-growth-annual.xls")
+
+Inflation_annual_rate <- read_excel("Project_Data/Inflation_consumer_prices.xls")
+```
+## Visualizing Russian migration over time
+
+```{r}
+
+Migration_citizenship_sex |>
+  filter(Citizenship == "Russian Federation") |>
+  select(Year, Citizenship, Immigrants_total) |>
+  ggplot(mapping = aes(x = Year, y = Immigrants_total)) +
+  geom_line()
+
+```
+## Creating database with economic growth, inflation rate, and Russian immigration
+
+```{r}
+
+GDP_growth_GEO <- GDP_growth |>
+  filter(`Country Name` == "Georgia") |>
+  select(-`Indicator Name`, -`Country Name`) |>
+  pivot_longer(names_to = "Year",
+               values_to = "Annual GDP Growth",
+               cols = -"Country Code")
+
+Inflation_annual_rate_GEO <- Inflation_annual_rate |>
+  filter(`Country Name` == "Georgia") |>
+  select(-`Indicator Name`, -`Country Name`)|>
+  pivot_longer(names_to = "Year",
+               values_to = "Inflation Rate",
+               cols = -"Country Code")
+
+
+## I want to transform `Year` to the class of double, but I can't do it.
+  
+Russian_immigration <- Migration_citizenship_sex|>
+  filter(Citizenship == "Russian Federation") |>
+  select(Year, Citizenship, Immigrants_total) |>
+  rename(Russian_immigrants = Immigrants_total) |>
+  select(-Citizenship)
+
+GDPgrowth_Inflation <- left_join(GDP_growth_GEO, Inflation_annual_rate_GEO,  by = "Year") |>
+  select(-"Country Code.y", -"Country Code.x")
+
+## GDPgrowth_Inflation_Immigration <- left_join(GDPgrowth_Inflation, Russian_immigration, by = "Year", copy = TRUE)
+
+## I need to do something here, it's not joining
+
+```
+
+
+## Graphing economic growth and inflation
+
+```{r}
+GDP_growth_GEO_plot <- GDP_growth_GEO |>
+  ggplot(mapping = aes(x = Year, y = `Annual GDP Growth`)) +
+  geom_col()
+
+Inflation_annual_rate_GEO_plot <- Inflation_annual_rate_GEO |>
+  filter(Year == 2006:2022) |>
+  ggplot(mapping = aes(x = Year, y = `Inflation Rate`)) +
+  geom_col()
+
+Inflation_annual_rate_GEO_plot
+
+## I would prefer to do this with geom_line() but it is not working for some reason
+```
+## Evaluating relationship between economic growth and Russian immigration
+
+Unfortunately, I could not join the datasets for Russian immigration and inflation/economic growth, or I would create their regression. For now, therefore, I will do economic growth-inflation.
+
+## Evaluating relationship between inflation and economic growth
+
+```{r}
+## Getting Correlation
+
+GDPgrowth_Inflation |>
+  summarise(correlation = cor(`Inflation Rate`, `Annual GDP Growth`))
+
+## Creating Regression
+
+lm(`Inflation Rate` ~ `Annual GDP Growth`, data = GDPgrowth_Inflation)
+
+## Visualizing
+
+GDPgrowth_Inflation |>
+  ggplot(mapping = aes(x = `Annual GDP Growth`, y = `Inflation Rate`)) +
+  geom_point() +
+  geom_smooth()
+```
+
+
+
+
+
+## Evaluating relationship between inflation and Russian immigration
+
+```{r}
+
+```
+
+
+
+
+
+
+
+## Notes for later
+
+```{r}
+Avg_migration_by_citizenship <- Migration_citizenship_sex |>
+    group_by(Year, Citizenship) |>
+  summarize(mean_immigration = mean(Immigrants_total)) |>
+  pivot_wider(names_from = Citizenship,
+              values_from = mean_immigration)
+```
+
+
+
+
+
+
+
