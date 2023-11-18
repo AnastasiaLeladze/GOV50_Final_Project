@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-2-1.png","index_files/figure-html5/unnamed-chunk-4-1.png","index_files/figure-html5/unnamed-chunk-5-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","Project_Data/01_Earnings_annual.xls","Project_Data/31-net-migration.xlsx","Project_Data/By_ownership_Type.xlsx","Project_Data/consumer-price-index-2010=100.xlsx","Project_Data/CPI_2010_base.xls","Project_Data/Foreign_direct_investment.xls","Project_Data/GDP-growth-annual.xls","Project_Data/GDP_current_dollars.xls","Project_Data/GDP_per_capita.xls","Project_Data/Inflation_consumer_prices.xls","Project_Data/Migration_citizenship_sex.xlsx","Project_Data/Personal_transfers.xls"]}
+  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-10-1.png","index_files/figure-html5/unnamed-chunk-11-1.png","index_files/figure-html5/unnamed-chunk-2-1.png","index_files/figure-html5/unnamed-chunk-3-1.png","index_files/figure-html5/unnamed-chunk-4-1.png","index_files/figure-html5/unnamed-chunk-5-1.png","index_files/figure-html5/unnamed-chunk-5-2.png","index_files/figure-html5/unnamed-chunk-6-1.png","index_files/figure-html5/unnamed-chunk-7-1.png","index_files/figure-html5/unnamed-chunk-8-1.png","index_files/figure-html5/unnamed-chunk-8-2.png","index_files/figure-html5/unnamed-chunk-9-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","Project_Data/01_Earnings_annual.xls","Project_Data/31-net-migration.xlsx","Project_Data/By_ownership_Type.xlsx","Project_Data/consumer-price-index-2010=100.xlsx","Project_Data/CPI_2010_base.xls","Project_Data/Foreign_direct_investment.xls","Project_Data/GDP-growth-annual.xls","Project_Data/GDP_current_dollars.xls","Project_Data/GDP_per_capita.xls","Project_Data/IMPORT-Previous-month=100.xlsx","Project_Data/Inflation_consumer_prices.xls","Project_Data/Migration_citizenship_sex.xlsx","Project_Data/Personal_transfers.xls","Project_Data/Table_Rate_AVG.xlsx"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1526,10 +1526,13 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
 <span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span></span>
 <span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://readxl.tidyverse.org'>readxl</a></span><span class='op'>)</span></span>
+<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://lubridate.tidyverse.org'>lubridate</a></span><span class='op'>)</span></span>
 <span></span>
 <span><span class='va'>GDP_per_capita</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/GDP_per_capita.xls"</span><span class='op'>)</span></span>
 <span></span>
 <span><span class='va'>Nominal_avg_earnings</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/01_Earnings_annual.xls"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>GEL_USD</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/Table_Rate_AVG.xlsx"</span><span class='op'>)</span></span>
 <span></span>
 <span><span class='va'>Net_migration</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/31-net-migration.xlsx"</span><span class='op'>)</span></span>
 <span></span>
@@ -1543,20 +1546,146 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span></span>
 <span><span class='va'>GDP_growth</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/GDP-growth-annual.xls"</span><span class='op'>)</span></span>
 <span></span>
-<span><span class='va'>Inflation_annual_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/Inflation_consumer_prices.xls"</span><span class='op'>)</span></span></code></pre>
+<span><span class='va'>Inflation_annual_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/Inflation_consumer_prices.xls"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Import_Price_index</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readxl.tidyverse.org/reference/read_excel.html'>read_excel</a></span><span class='op'>(</span><span class='st'>"Project_Data/IMPORT-Previous-month=100.xlsx"</span><span class='op'>)</span></span></code></pre>
 </div>
 </div>
+<h2 id="steps-to-take">Steps to take</h2>
+<ol type="1">
+<li><p>Russians are coming in, buying lari, lari gets stronger. _&gt; export and import price index, let’s see if exports increased after 2022</p></li>
+<li><p>Create database with monthly data for inflation - DONE</p></li>
+<li><p>See the sectoral distriburion of inflation - We should look at how prices change for good vs services. Are the change in prices of imported and locally produced stuff different?</p></li>
+<li><p>Monthly data for immigration - IMPOSSIBLE</p></li>
+<li><p>Creating visualizations - DONE</p></li>
+<li><p>Seeing the correlation, maybe writing an analysis - PARTLY</p></li>
+<li><p>Controlling for a confounder, maybe global inflation or US inflation or something like that. - LATER</p></li>
+</ol>
 <h2 id="visualizing-russian-migration-over-time">Visualizing Russian migration over time</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Migration_citizenship_sex</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Citizenship</span> <span class='op'>==</span> <span class='st'>"Russian Federation"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Citizenship</span> <span class='op'>==</span> <span class='st'>"Russian Federation"</span>,</span>
+<span>         <span class='va'>Year</span> <span class='op'>&gt;</span> <span class='fl'>2019</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>Year</span>, <span class='va'>Citizenship</span>, <span class='va'>Immigrants_total</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Year</span>, y <span class='op'>=</span> <span class='va'>Immigrants_total</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_col</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='st'>"Number of Russian Immigrants"</span><span class='op'>)</span></span></code></pre>
 </div>
 <p><img src="index_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
 </div>
+<p>Unfortunately, I could not find monthly data for immigration anywhere. This will be a problem for my project, and I might have to change the whole thing, though now, due to time constraints, I didn’t have any other choice but leave it as it is.</p>
+<p>Though there are no organized and detailed monthly data about it, we know for sure that the peak of the Russian immigration was in September-October 2022, when Putin declared mobilization in the country. However, this was the time when people came to Georgia mostly with motivation of escaping military service. Before this happened the heavy sanctioning of Russia and inflow of comparatively wealthy Russian citizens into Georgia. This first inflow might have had more economic influence on the country since we are talking about bigger amount of cash.</p>
+<p>Now, let’s look at how exchange rates of Georgian currency changed. Russian citizens came into the country with their money in dollars, and in order to settle in the country, they started buying local currency. Buying local currency with dollars would result in strengthening of Lari. Let us check this with monthly exchange rates - GEL/USD.</p>
+<h2 id="exchange-rate-gelusd-over-time">Exchange rate GEL/USD over time</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>GEL_USD1</span> <span class='op'>&lt;-</span> <span class='va'>GEL_USD</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>Month <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/match.html'>match</a></span><span class='op'>(</span><span class='va'>Month</span>, <span class='va'>month.name</span><span class='op'>)</span>,</span>
+<span>         date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='va'>Year</span>, <span class='va'>Month</span>, <span class='st'>"01"</span>, sep <span class='op'>=</span> <span class='st'>"-"</span><span class='op'>)</span>,</span>
+<span>         date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='va'>date</span>, format <span class='op'>=</span> <span class='st'>"%Y-%m-%d"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Year</span> <span class='op'>&gt;</span> <span class='fl'>2019</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>GEL_USD1</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>date</span>, y <span class='op'>=</span> <span class='va'>`Avg. Exchange Rate`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>xlab</a></span><span class='op'>(</span><span class='st'>""</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>"Year"</span>, y <span class='op'>=</span> <span class='st'>"Avg. Exchange Rate, GEL/USD"</span><span class='op'>)</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-3-1.png" width="624" /></p>
+</div>
+<p>As we see, the rate is going steeply down in 2022, reaching minimum in the end of the first quarter of 2023. This means that the currency did strengthen, from 1 USD being equal to ~3.4 GEL in 2021 to it equalling ~2.52 GEL in 2023. Though this technically supports my opinion that Lari strengthened while Russians arrived, the graph also shows that the process of strengthening started way before the Russian immigration, so the causes are still to be understood, it should not be only immigration. So far, this works against my initial hypothesis.</p>
+<p>I’ll still continue analysis, I want to see where this will take me.</p>
+<p>Since the exchange rates are now in Georgian currency’s favor, since it is getting stronger compared to other currencies, it should be cheaper for Georgian population to get imported goods. Now, I will observe the Import Price Index to see how prices on imported goods change in the same time period.</p>
+<h2 id="import-price-index">Import Price Index</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Import_Price_index1</span> <span class='op'>&lt;-</span> <span class='va'>Import_Price_index</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>Month <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/match.html'>match</a></span><span class='op'>(</span><span class='va'>Month</span>, <span class='va'>month.name</span><span class='op'>)</span>,</span>
+<span>         date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='va'>Year</span>, <span class='va'>Month</span>, <span class='st'>"01"</span>, sep <span class='op'>=</span> <span class='st'>"-"</span><span class='op'>)</span>,</span>
+<span>         date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='va'>date</span>, format <span class='op'>=</span> <span class='st'>"%Y-%m-%d"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Import_Price_index1</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>date</span>, y <span class='op'>=</span> <span class='va'>`Import Price`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>xlab</a></span><span class='op'>(</span><span class='st'>""</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>"Year"</span>, y <span class='op'>=</span> <span class='st'>"Import Price Index"</span><span class='op'>)</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-4-1.png" width="624" /></p>
+</div>
+<p>This graph looks messy because this Import Price Index takes previous month as a baseline for comparison. However, we can observe some trends here, specifically, if we remember what we saw on the exchange rates chart, we can see that when the exchange rate was low, on its negative peaks, import prices too fall. We can compare the beginning of 2023, for example, prices on imported goods are less because Lari is stronger compared to other currencies and can buy more now.</p>
+<p>We can also check the correlation of exchange rate and import price index. When the rate goes down, Lari gets stronger. If Lari gets stronger, import prices should fall, therefore the index should be reduced too. From this logic, their correlation should be positive, but let’s check.</p>
+<h2 id="correlation-of-exchange-rate-and-import-price-index">Correlation of exchange rate and import price index</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'># Putting these variables into same data</span></span>
+<span></span>
+<span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>left_join</a></span><span class='op'>(</span><span class='va'>Import_Price_index1</span>, <span class='va'>GEL_USD1</span>, by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"date"</span>, <span class='st'>"Year"</span>, <span class='st'>"Month"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>correlation <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>`Import Price`</span>, <span class='va'>`Avg. Exchange Rate`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">correlation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.4655336</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Happily, the correlation is ~0.47 - positive, as we were expecting.</p>
+<p>Georgia imports a lot of its goods. Such dynamics should have had positive effects on general price levels, however, it is remarkable that people complain about terribly rising prices lately, especially after the war started in Ukraine and Russians came into the country. It will be useful to observe inflation rate in more detail.</p>
+<h2 id="monthly-inflation">Monthly Inflation</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Tidying dataset</span></span>
+<span></span>
+<span><span class='va'>Inflation</span> <span class='op'>&lt;-</span> <span class='va'>CPI_base_2010_Geostats_monthly</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_longer.html'>pivot_longer</a></span><span class='op'>(</span>names_to <span class='op'>=</span> <span class='st'>"Month"</span>,</span>
+<span>               values_to <span class='op'>=</span> <span class='st'>"Inflation"</span>,</span>
+<span>               cols <span class='op'>=</span> <span class='va'>January</span><span class='op'>:</span><span class='va'>December</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Year</span> <span class='op'>&gt;</span> <span class='fl'>2019</span><span class='op'>)</span> </span>
+<span></span>
+<span><span class='va'>Inflation</span> <span class='op'>&lt;-</span> <span class='va'>Inflation</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>Month <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/match.html'>match</a></span><span class='op'>(</span><span class='va'>Month</span>, <span class='va'>month.name</span><span class='op'>)</span>,</span>
+<span>         date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='va'>Year</span>, <span class='va'>Month</span>, <span class='st'>"01"</span>, sep <span class='op'>=</span> <span class='st'>"-"</span><span class='op'>)</span>,</span>
+<span>         date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='va'>date</span>, format <span class='op'>=</span> <span class='st'>"%Y-%m-%d"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span><span class='va'>Inflation</span></span></code></pre>
+</div>
+<pre><code># A tibble: 48 × 4
+    Year Month Inflation date      
+   &lt;dbl&gt; &lt;int&gt;     &lt;dbl&gt; &lt;date&gt;    
+ 1  2020     1      139. 2020-01-01
+ 2  2020     2      139. 2020-02-01
+ 3  2020     3      140. 2020-03-01
+ 4  2020     4      142. 2020-04-01
+ 5  2020     5      142. 2020-05-01
+ 6  2020     6      140. 2020-06-01
+ 7  2020     7      139. 2020-07-01
+ 8  2020     8      139. 2020-08-01
+ 9  2020     9      140. 2020-09-01
+10  2020    10      141. 2020-10-01
+# ℹ 38 more rows</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Visualizing</span></span>
+<span></span>
+<span><span class='va'>Inflation_p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>Inflation</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>date</span>, y<span class='op'>=</span><span class='va'>Inflation</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> </span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>xlab</a></span><span class='op'>(</span><span class='st'>""</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>"Year"</span>, y <span class='op'>=</span> <span class='st'>"Inflation Rate"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>Inflation_p</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-6-1.png" width="624" /></p>
+</div>
+<p>Last graphs showed that Lari was getting stronger and the prices on imported goods were decreasing on average. However, instead of this resulting in the decrease in overal price level, the inflation rate graph above shows us that the overal price level grew in Georgian economy. Since imported goods got cheaper, the rise in inflation rate might mean that the prices on domestically produced goods and services rose and pulled the overall level up.</p>
+<h2 id="prices-on-domestically-produced-goods-and-services">Prices on domestically produced goods and services</h2>
+<p>…</p>
+<h2 id="potentially-useful-notes">Potentially Useful notes</h2>
 <h2 id="creating-database-with-economic-growth-inflation-rate-and-russian-immigration">Creating database with economic growth, inflation rate, and Russian immigration</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1565,17 +1694,39 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>`Indicator Name`</span>, <span class='op'>-</span><span class='va'>`Country Name`</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_longer.html'>pivot_longer</a></span><span class='op'>(</span>names_to <span class='op'>=</span> <span class='st'>"Year"</span>,</span>
 <span>               values_to <span class='op'>=</span> <span class='st'>"Annual GDP Growth"</span>,</span>
-<span>               cols <span class='op'>=</span> <span class='op'>-</span><span class='st'>"Country Code"</span><span class='op'>)</span></span>
+<span>               cols <span class='op'>=</span> <span class='op'>-</span><span class='st'>"Country Code"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>Year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>Year</span><span class='op'>)</span><span class='op'>)</span></span>
 <span></span>
-<span><span class='va'>Inflation_annual_rate_GEO</span> <span class='op'>&lt;-</span> <span class='va'>Inflation_annual_rate</span> <span class='op'>|&gt;</span></span>
+<span><span class='va'>GDP_growth_GEO</span></span></code></pre>
+</div>
+<pre><code># A tibble: 17 × 3
+   `Country Code`  Year `Annual GDP Growth`
+   &lt;chr&gt;          &lt;dbl&gt;               &lt;dbl&gt;
+ 1 GEO             2006                9.42
+ 2 GEO             2007               12.6 
+ 3 GEO             2008                2.42
+ 4 GEO             2009               -3.65
+ 5 GEO             2010                6.25
+ 6 GEO             2011                7.40
+ 7 GEO             2012                6.37
+ 8 GEO             2013                3.62
+ 9 GEO             2014                4.43
+10 GEO             2015                3.02
+11 GEO             2016                2.91
+12 GEO             2017                4.84
+13 GEO             2018                4.84
+14 GEO             2019                4.98
+15 GEO             2020               -6.76
+16 GEO             2021               10.5 
+17 GEO             2022               10.1 </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Inflation_annual_rate_GEO</span> <span class='op'>&lt;-</span> <span class='va'>Inflation_annual_rate</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>`Country Name`</span> <span class='op'>==</span> <span class='st'>"Georgia"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>`Indicator Name`</span>, <span class='op'>-</span><span class='va'>`Country Name`</span><span class='op'>)</span><span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_longer.html'>pivot_longer</a></span><span class='op'>(</span>names_to <span class='op'>=</span> <span class='st'>"Year"</span>,</span>
 <span>               values_to <span class='op'>=</span> <span class='st'>"Inflation Rate"</span>,</span>
-<span>               cols <span class='op'>=</span> <span class='op'>-</span><span class='st'>"Country Code"</span><span class='op'>)</span></span>
-<span></span>
-<span></span>
-<span><span class='co'>## I want to transform `Year` to the class of double, but I can't do it.</span></span>
+<span>               cols <span class='op'>=</span> <span class='op'>-</span><span class='st'>"Country Code"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>Year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>Year</span><span class='op'>)</span><span class='op'>)</span></span>
 <span>  </span>
 <span><span class='va'>Russian_immigration</span> <span class='op'>&lt;-</span> <span class='va'>Migration_citizenship_sex</span><span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Citizenship</span> <span class='op'>==</span> <span class='st'>"Russian Federation"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
@@ -1586,9 +1737,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span><span class='va'>GDPgrowth_Inflation</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>left_join</a></span><span class='op'>(</span><span class='va'>GDP_growth_GEO</span>, <span class='va'>Inflation_annual_rate_GEO</span>,  by <span class='op'>=</span> <span class='st'>"Year"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='st'>"Country Code.y"</span>, <span class='op'>-</span><span class='st'>"Country Code.x"</span><span class='op'>)</span></span>
 <span></span>
-<span><span class='co'>## GDPgrowth_Inflation_Immigration &lt;- left_join(GDPgrowth_Inflation, Russian_immigration, by = "Year", copy = TRUE)</span></span>
-<span></span>
-<span><span class='co'>## I need to do something here, it's not joining</span></span></code></pre>
+<span><span class='va'>GDPgrowth_Inflation_Immigration</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>left_join</a></span><span class='op'>(</span><span class='va'>GDPgrowth_Inflation</span>, <span class='va'>Russian_immigration</span>, by <span class='op'>=</span> <span class='st'>"Year"</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Year</span> <span class='op'>&gt;</span> <span class='fl'>2011</span><span class='op'>)</span></span></code></pre>
 </div>
 </div>
 <h2 id="graphing-economic-growth-and-inflation">Graphing economic growth and inflation</h2>
@@ -1596,22 +1746,58 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>GDP_growth_GEO_plot</span> <span class='op'>&lt;-</span> <span class='va'>GDP_growth_GEO</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Year</span>, y <span class='op'>=</span> <span class='va'>`Annual GDP Growth`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_col</a></span><span class='op'>(</span><span class='op'>)</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span></span>
 <span></span>
-<span><span class='va'>Inflation_annual_rate_GEO_plot</span> <span class='op'>&lt;-</span> <span class='va'>Inflation_annual_rate_GEO</span> <span class='op'>|&gt;</span></span>
+<span><span class='va'>GDP_growth_GEO_plot</span></span></code></pre>
+</div>
+<img src="index_files/figure-html5/unnamed-chunk-8-1.png" width="624" />
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Inflation_annual_rate_GEO_plot</span> <span class='op'>&lt;-</span> <span class='va'>Inflation_annual_rate_GEO</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Year</span> <span class='op'>==</span> <span class='fl'>2006</span><span class='op'>:</span><span class='fl'>2022</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Year</span>, y <span class='op'>=</span> <span class='va'>`Inflation Rate`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_col</a></span><span class='op'>(</span><span class='op'>)</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span></span>
 <span></span>
 <span><span class='va'>Inflation_annual_rate_GEO_plot</span></span></code></pre>
 </div>
-<img src="index_files/figure-html5/unnamed-chunk-4-1.png" width="624" />
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## I would prefer to do this with geom_line() but it is not working for some reason</span></span></code></pre>
-</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-8-2.png" width="624" /></p>
 </div>
 <h2 id="evaluating-relationship-between-economic-growth-and-russian-immigration">Evaluating relationship between economic growth and Russian immigration</h2>
-<p>Unfortunately, I could not join the datasets for Russian immigration and inflation/economic growth, or I would create their regression. For now, therefore, I will do economic growth-inflation.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Getting Correlation</span></span>
+<span></span>
+<span><span class='va'>GDPgrowth_Inflation_Immigration</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>correlation <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>`Annual GDP Growth`</span>, <span class='va'>`Russian_immigrants`</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 1 × 1
+  correlation
+        &lt;dbl&gt;
+1       0.465</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Creating Regression</span></span>
+<span></span>
+<span><span class='va'>GII2022</span> <span class='op'>&lt;-</span> <span class='va'>GDPgrowth_Inflation_Immigration</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Year</span> <span class='op'>&gt;</span> <span class='fl'>2020</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>`Annual GDP Growth`</span> <span class='op'>~</span> <span class='va'>`Russian_immigrants`</span>, data <span class='op'>=</span> <span class='va'>GII2022</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = `Annual GDP Growth` ~ Russian_immigrants, data = GII2022)
+
+Coefficients:
+       (Intercept)  Russian_immigrants  
+         1.054e+01          -6.939e-06  </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Visualizing</span></span>
+<span></span>
+<span><span class='va'>GDPgrowth_Inflation_Immigration</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>`Russian_immigrants`</span>, y <span class='op'>=</span> <span class='va'>`Annual GDP Growth`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-9-1.png" width="624" /></p>
+</div>
 <h2 id="evaluating-relationship-between-inflation-and-economic-growth">Evaluating relationship between inflation and economic growth</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1644,13 +1830,46 @@ Coefficients:
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
 </div>
-<p><img src="index_files/figure-html5/unnamed-chunk-5-1.png" width="624" /></p>
+<p><img src="index_files/figure-html5/unnamed-chunk-10-1.png" width="624" /></p>
 </div>
 <h2 id="evaluating-relationship-between-inflation-and-russian-immigration">Evaluating relationship between inflation and Russian immigration</h2>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Getting Correlation</span></span>
+<span></span>
+<span><span class='va'>GDPgrowth_Inflation_Immigration</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>correlation <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>`Inflation Rate`</span>, <span class='va'>`Russian_immigrants`</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
 </div>
-<h2 id="notes-for-later">Notes for later</h2>
+<pre><code># A tibble: 1 × 1
+  correlation
+        &lt;dbl&gt;
+1       0.659</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Creating Regression</span></span>
+<span></span>
+<span><span class='va'>GII2022</span> <span class='op'>&lt;-</span> <span class='va'>GDPgrowth_Inflation_Immigration</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Year</span> <span class='op'>&gt;</span> <span class='fl'>2020</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>`Inflation Rate`</span> <span class='op'>~</span> <span class='va'>`Russian_immigrants`</span>, data <span class='op'>=</span> <span class='va'>GII2022</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = `Inflation Rate` ~ Russian_immigrants, data = GII2022)
+
+Coefficients:
+       (Intercept)  Russian_immigrants  
+         9.074e+00           4.533e-05  </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## Visualizing</span></span>
+<span></span>
+<span><span class='va'>GDPgrowth_Inflation_Immigration</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>`Russian_immigrants`</span>, y <span class='op'>=</span> <span class='va'>`Inflation Rate`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-11-1.png" width="624" /></p>
+</div>
+<h2 id="average-migration-by-citizenship">Average Migration by citizenship</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>Avg_migration_by_citizenship</span> <span class='op'>&lt;-</span> <span class='va'>Migration_citizenship_sex</span> <span class='op'>|&gt;</span></span>
@@ -1660,7 +1879,7 @@ Coefficients:
 <span>              values_from <span class='op'>=</span> <span class='va'>mean_immigration</span><span class='op'>)</span></span></code></pre>
 </div>
 </div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

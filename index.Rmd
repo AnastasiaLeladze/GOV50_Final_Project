@@ -21,10 +21,13 @@ To check whether this is correct or not, I will need to look at exactly what the
 library(tidyverse)
 library(dplyr)
 library(readxl)
+library(lubridate)
 
 GDP_per_capita <- read_excel("Project_Data/GDP_per_capita.xls")
 
 Nominal_avg_earnings <- read_excel("Project_Data/01_Earnings_annual.xls")
+
+GEL_USD <- read_excel("Project_Data/Table_Rate_AVG.xlsx")
 
 Net_migration <- read_excel("Project_Data/31-net-migration.xlsx")
 
@@ -39,18 +42,139 @@ Foreign_investment <- read_excel("Project_Data/Foreign_direct_investment.xls")
 GDP_growth <- read_excel("Project_Data/GDP-growth-annual.xls")
 
 Inflation_annual_rate <- read_excel("Project_Data/Inflation_consumer_prices.xls")
+
+Import_Price_index <- read_excel("Project_Data/IMPORT-Previous-month=100.xlsx")
 ```
+## Steps to take 
+
+1. Russians are coming in, buying lari, lari gets stronger. _> export and import price index, let's see if exports increased after 2022
+
+1. Create database with monthly data for inflation - DONE
+
+2. See the sectoral distriburion of inflation - We should look at how prices change for good vs services. Are the change in prices of imported and locally produced stuff different? 
+
+3. Monthly data for immigration - IMPOSSIBLE
+
+4. Creating visualizations - DONE
+
+5. Seeing the correlation, maybe writing an analysis - PARTLY
+
+6. Controlling for a confounder, maybe global inflation or US inflation or something like that. - LATER
+
+
 ## Visualizing Russian migration over time
 
 ```{r}
 
 Migration_citizenship_sex |>
-  filter(Citizenship == "Russian Federation") |>
+  filter(Citizenship == "Russian Federation",
+         Year > 2019) |>
   select(Year, Citizenship, Immigrants_total) |>
   ggplot(mapping = aes(x = Year, y = Immigrants_total)) +
-  geom_line()
+  geom_col() +
+  labs(y = "Number of Russian Immigrants")
 
 ```
+
+Unfortunately, I could not find monthly data for immigration anywhere. This will be a problem for my project, and I might have to change the whole thing, though now, due to time constraints, I didn't have any other choice but leave it as it is.
+
+Though there are no organized and detailed monthly data about it, we know for sure that the peak of the Russian immigration was in September-October 2022, when Putin declared mobilization in the country. However, this was the time when people came to Georgia mostly with motivation of escaping military service. Before this happened the heavy sanctioning of Russia and inflow of comparatively wealthy Russian citizens into Georgia. This first inflow might have had more economic influence on the country since we are talking about bigger amount of cash. 
+
+Now, let's look at how exchange rates of Georgian currency changed. Russian citizens came into the country with their money in dollars, and in order to settle in the country, they started buying local currency. Buying local currency with dollars would result in strengthening of Lari. Let us check this with monthly exchange rates - GEL/USD.
+
+## Exchange rate GEL/USD over time
+
+```{r}
+GEL_USD1 <- GEL_USD |>
+  mutate(Month = match(Month, month.name),
+         date = paste(Year, Month, "01", sep = "-"),
+         date = as.Date(date, format = "%Y-%m-%d")) |>
+  filter(Year > 2019)
+
+ggplot(GEL_USD1, aes(x = date, y = `Avg. Exchange Rate`)) +
+  geom_line() +
+  xlab("") +
+  labs(x = "Year", y = "Avg. Exchange Rate, GEL/USD")
+  
+```
+As we see, the rate is going steeply down in 2022, reaching minimum in the end of the first quarter of 2023. This means that the currency did strengthen, from 1 USD being equal to ~3.4 GEL in 2021 to it equalling ~2.52 GEL in 2023. Though this technically supports my opinion that Lari strengthened while Russians arrived, the graph also shows that the process of strengthening started way before the Russian immigration, so the causes are still to be understood, it should not be only immigration. So far, this works against my initial hypothesis.
+
+I'll still continue analysis, I want to see where this will take me.
+
+Since the exchange rates are now in Georgian currency's favor, since it is getting stronger compared to other currencies, it should be cheaper for Georgian population to get imported goods. Now, I will observe the Import Price Index to see how prices on imported goods change in the same time period.
+
+## Import Price Index
+
+```{r}
+Import_Price_index1 <- Import_Price_index |>
+  mutate(Month = match(Month, month.name),
+         date = paste(Year, Month, "01", sep = "-"),
+         date = as.Date(date, format = "%Y-%m-%d"))
+
+Import_Price_index1 |>
+  ggplot(aes(x = date, y = `Import Price`)) +
+  geom_line() +
+  geom_smooth() +
+  xlab("") +
+  labs(x = "Year", y = "Import Price Index")
+  
+```
+This graph looks messy because this Import Price Index takes previous month as a baseline for comparison. However, we can observe some trends here, specifically, if we remember what we saw on the exchange rates chart, we can see that when the exchange rate was low, on its negative peaks, import prices too fall. We can compare the beginning of 2023, for example, prices on imported goods are less because Lari is stronger compared to other currencies and can buy more now. 
+
+We can also check the correlation of exchange rate and import price index. When the rate goes down, Lari gets stronger. If Lari gets stronger, import prices should fall, therefore the index should be reduced too. From this logic, their correlation should be positive, but let's check.
+
+## Correlation of exchange rate and import price index
+
+```{r}
+# Putting these variables into same data
+
+left_join(Import_Price_index1, GEL_USD1, by = c("date", "Year", "Month")) |>
+  summarise(correlation = cor(`Import Price`, `Avg. Exchange Rate`)) |>
+  knitr::kable()
+
+
+```
+Happily, the correlation is ~0.47 - positive, as we were expecting.
+
+Georgia imports a lot of its goods. Such dynamics should have had positive effects on general price levels, however, it is remarkable that people complain about terribly rising prices lately, especially after the war started in Ukraine and Russians came into the country. It will be useful to observe inflation rate in more detail.
+
+
+## Monthly Inflation
+
+```{r}
+
+## Tidying dataset
+
+Inflation <- CPI_base_2010_Geostats_monthly |>
+  pivot_longer(names_to = "Month",
+               values_to = "Inflation",
+               cols = January:December) |>
+  filter(Year > 2019) 
+
+Inflation <- Inflation |>
+  mutate(Month = match(Month, month.name),
+         date = paste(Year, Month, "01", sep = "-"),
+         date = as.Date(date, format = "%Y-%m-%d"))
+Inflation
+
+## Visualizing
+
+Inflation_p <- ggplot(Inflation, aes(x=date, y=Inflation)) +
+  geom_line() + 
+  xlab("") +
+  labs(x = "Year", y = "Inflation Rate")
+
+Inflation_p
+```
+
+Last graphs showed that Lari was getting stronger and the prices on imported goods were decreasing on average. However, instead of this resulting in the decrease in overal price level, the inflation rate graph above shows us that the overal price level grew in Georgian economy. Since imported goods got cheaper, the rise in inflation rate might mean that the prices on domestically produced goods and services rose and pulled the overall level up.
+
+## Prices on domestically produced goods and services
+
+...
+
+## Potentially Useful notes
+
 ## Creating database with economic growth, inflation rate, and Russian immigration
 
 ```{r}
@@ -60,17 +184,18 @@ GDP_growth_GEO <- GDP_growth |>
   select(-`Indicator Name`, -`Country Name`) |>
   pivot_longer(names_to = "Year",
                values_to = "Annual GDP Growth",
-               cols = -"Country Code")
+               cols = -"Country Code") |>
+  mutate(Year = as.numeric(Year))
+
+GDP_growth_GEO
 
 Inflation_annual_rate_GEO <- Inflation_annual_rate |>
   filter(`Country Name` == "Georgia") |>
   select(-`Indicator Name`, -`Country Name`)|>
   pivot_longer(names_to = "Year",
                values_to = "Inflation Rate",
-               cols = -"Country Code")
-
-
-## I want to transform `Year` to the class of double, but I can't do it.
+               cols = -"Country Code") |>
+  mutate(Year = as.numeric(Year))
   
 Russian_immigration <- Migration_citizenship_sex|>
   filter(Citizenship == "Russian Federation") |>
@@ -81,32 +206,50 @@ Russian_immigration <- Migration_citizenship_sex|>
 GDPgrowth_Inflation <- left_join(GDP_growth_GEO, Inflation_annual_rate_GEO,  by = "Year") |>
   select(-"Country Code.y", -"Country Code.x")
 
-## GDPgrowth_Inflation_Immigration <- left_join(GDPgrowth_Inflation, Russian_immigration, by = "Year", copy = TRUE)
-
-## I need to do something here, it's not joining
+GDPgrowth_Inflation_Immigration <- left_join(GDPgrowth_Inflation, Russian_immigration, by = "Year") |>
+  filter(Year > 2011)
 
 ```
-
 
 ## Graphing economic growth and inflation
 
 ```{r}
 GDP_growth_GEO_plot <- GDP_growth_GEO |>
   ggplot(mapping = aes(x = Year, y = `Annual GDP Growth`)) +
-  geom_col()
+  geom_line()
+
+GDP_growth_GEO_plot
 
 Inflation_annual_rate_GEO_plot <- Inflation_annual_rate_GEO |>
   filter(Year == 2006:2022) |>
   ggplot(mapping = aes(x = Year, y = `Inflation Rate`)) +
-  geom_col()
+  geom_line()
 
 Inflation_annual_rate_GEO_plot
-
-## I would prefer to do this with geom_line() but it is not working for some reason
 ```
+
 ## Evaluating relationship between economic growth and Russian immigration
 
-Unfortunately, I could not join the datasets for Russian immigration and inflation/economic growth, or I would create their regression. For now, therefore, I will do economic growth-inflation.
+```{r}
+## Getting Correlation
+
+GDPgrowth_Inflation_Immigration |>
+  summarise(correlation = cor(`Annual GDP Growth`, `Russian_immigrants`))
+
+## Creating Regression
+
+GII2022 <- GDPgrowth_Inflation_Immigration |>
+  filter(Year > 2020)
+
+lm(`Annual GDP Growth` ~ `Russian_immigrants`, data = GII2022)
+
+## Visualizing
+
+GDPgrowth_Inflation_Immigration |>
+  ggplot(mapping = aes(x = `Russian_immigrants`, y = `Annual GDP Growth`)) +
+  geom_point() +
+  geom_smooth()
+```
 
 ## Evaluating relationship between inflation and economic growth
 
@@ -129,22 +272,30 @@ GDPgrowth_Inflation |>
 ```
 
 
-
-
-
 ## Evaluating relationship between inflation and Russian immigration
 
 ```{r}
+## Getting Correlation
 
+GDPgrowth_Inflation_Immigration |>
+  summarise(correlation = cor(`Inflation Rate`, `Russian_immigrants`))
+
+## Creating Regression
+
+GII2022 <- GDPgrowth_Inflation_Immigration |>
+  filter(Year > 2020)
+
+lm(`Inflation Rate` ~ `Russian_immigrants`, data = GII2022)
+
+## Visualizing
+
+GDPgrowth_Inflation_Immigration |>
+  ggplot(mapping = aes(x = `Russian_immigrants`, y = `Inflation Rate`)) +
+  geom_point() +
+  geom_smooth()
 ```
 
-
-
-
-
-
-
-## Notes for later
+## Average Migration by citizenship
 
 ```{r}
 Avg_migration_by_citizenship <- Migration_citizenship_sex |>
