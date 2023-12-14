@@ -2,12 +2,15 @@
 title: "Gov 50 Final Project"
 author: "Anastasia Leladze"
 description: "My final project"
-output:
+output: html_document
+
+```{r}
   distill::distill_article:
     self_contained: false
 ---P'HYJU'[;P
 DGTR1
 'SAXCB M]
+```
 
 
 
@@ -20,6 +23,23 @@ To check whether this is correct or not, I will need to look at exactly what the
 ## Loading all the datasets
 
 ```{r}
+library(tidyverse)
+library(readxl)
+
+
+
+Net_migration <- read_excel("Project_Data/31-net-migration.xlsx")
+
+
+
+
+
+CPI_base_2010_WorldBank <- read_excel("Project_Data/CPI_2010_base.xls")
+
+Inflation_annual_rate <- read_excel("Project_Data/Inflation_consumer_prices.xls")
+
+```
+
 library(tidyverse)
 library(readxl)
 
@@ -102,9 +122,8 @@ The Russo-Ukrainian War caused a lot of demographic turmoil in Eastern Europe. E
 In the graph below, we can observe Russian immigration to Georgia over a few years. These numbers don't reflect Russian citizens who stayed in the country short-term - the graph shows only the people who stayed in Georgia for more than 7 months - so that we can assume that they had enough economic activity to influence our dependent variable of inflation rate. Unfortunately, I could not find monthly data for Russian immigration. Having monthly data would allow me to make more credible claims and observe the relationship better, however for now I will have to rely on the information below due to the lack of reliably structured data.
 
 
-```{r}
-
 ## Loading the data
+```{r}
 
 Migration_citizenship_sex <- read_excel("Project_Data/Migration_citizenship_sex.xlsx")
 
@@ -232,6 +251,7 @@ US inflation rate will serve as a good proxy for global inflation due to its lea
 This dataset takes 1983 as a base year, which I will change to 2020, just like in Georgian dataset.
 
 ```{r}
+
 ## Loading the data
 
 US_Inflation <- read_excel("Project_Data/CPIAUCNS.xls")
@@ -280,122 +300,11 @@ Infl_Imm <- left_join(Inflation_adj, Immigration_rus, by = "Year") |>
 
 ## Running Regression
 
-lm(Inflation_annual ~ Immigrants_total, data = Infl_Imm) |>
-modelsummary::modelsummary(statistic = c("s.e. = {std.error}",
-                                         "p = {p.value}"),
-                           gof_map = c("nobs", "r.squared", "adj.r.squared"))
 ```
 
 ## Step V: Hypothesis Test
 
 We will use hypothesis test to evaluate the relationship between inflation and immigration, to understand whether they are independent or not. By using the permutation test, we will assume at first that they are independent. This will be our null hypothesis. Our alternative hypothesis will be that increase in immigration leads to the increase in inflation rate. The test will give us the p-value, showing what is the probability of having this test statistic if null hypothesis is true. If the p-value is lower than 0.05, as standard, I will reject null hypothesis. So, my alpha will be 0.05.
-
-```{r}
-
-Inflation_adj |>
-  specify(Inflation_annual ~ Immigrants_total) |>
-  hypothesize(null = "independence") |>
-  generate(reps = 1000, type = "permute") |>
-  calculate(stat = "correlation")
-
-```
-
-
-## Creating database with economic growth, inflation rate, and Russian immigration
-
-```{r}
-
-GDP_growth_GEO <- GDP_growth |>
-  filter(`Country Name` == "Georgia") |>
-  select(-`Indicator Name`, -`Country Name`) |>
-  pivot_longer(names_to = "Year",
-               values_to = "Annual GDP Growth",
-               cols = -"Country Code") |>
-  mutate(Year = as.numeric(Year))
-
-GDP_growth_GEO
-
-Inflation_annual_rate_GEO <- Inflation_annual_rate |>
-  filter(`Country Name` == "Georgia") |>
-  select(-`Indicator Name`, -`Country Name`)|>
-  pivot_longer(names_to = "Year",
-               values_to = "Inflation Rate",
-               cols = -"Country Code") |>
-  mutate(Year = as.numeric(Year))
-  
-Russian_immigration <- Migration_citizenship_sex|>
-  filter(Citizenship == "Russian Federation") |>
-  select(Year, Citizenship, Immigrants_total) |>
-  rename(Russian_immigrants = Immigrants_total) |>
-  select(-Citizenship)
-
-GDPgrowth_Inflation <- left_join(GDP_growth_GEO, Inflation_annual_rate_GEO,  by = "Year") |>
-  select(-"Country Code.y", -"Country Code.x")
-
-GDPgrowth_Inflation_Immigration <- left_join(GDPgrowth_Inflation, Russian_immigration, by = "Year") |>
-  filter(Year > 2011)
-
-```
-
-## Graphing economic growth and inflation
-
-```{r}
-GDP_growth_GEO_plot <- GDP_growth_GEO |>
-  ggplot(mapping = aes(x = Year, y = `Annual GDP Growth`)) +
-  geom_line()
-
-GDP_growth_GEO_plot
-
-Inflation_annual_rate_GEO_plot <- Inflation_annual_rate_GEO |>
-  filter(Year == 2006:2022) |>
-  ggplot(mapping = aes(x = Year, y = `Inflation Rate`)) +
-  geom_line()
-
-Inflation_annual_rate_GEO_plot
-```
-
-## Evaluating relationship between economic growth and Russian immigration
-
-```{r}
-## Getting Correlation
-
-GDPgrowth_Inflation_Immigration |>
-  summarise(correlation = cor(`Annual GDP Growth`, `Russian_immigrants`))
-
-## Creating Regression
-
-GII2022 <- GDPgrowth_Inflation_Immigration |>
-  filter(Year > 2020)
-
-lm(`Annual GDP Growth` ~ `Russian_immigrants`, data = GII2022)
-
-## Visualizing
-
-GDPgrowth_Inflation_Immigration |>
-  ggplot(mapping = aes(x = `Russian_immigrants`, y = `Annual GDP Growth`)) +
-  geom_point() +
-  geom_smooth()
-```
-
-## Evaluating relationship between inflation and economic growth
-
-```{r}
-## Getting Correlation
-
-GDPgrowth_Inflation |>
-  summarise(correlation = cor(`Inflation Rate`, `Annual GDP Growth`))
-
-## Creating Regression
-
-lm(`Inflation Rate` ~ `Annual GDP Growth`, data = GDPgrowth_Inflation)
-
-## Visualizing
-
-GDPgrowth_Inflation |>
-  ggplot(mapping = aes(x = `Annual GDP Growth`, y = `Inflation Rate`)) +
-  geom_point() +
-  geom_smooth()
-```
 
 
 ## Evaluating relationship between inflation and Russian immigration
