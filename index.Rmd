@@ -5,11 +5,13 @@ description: "My final project"
 output:
   distill::distill_article:
     self_contained: false
----
+---P'HYJU'[;P
+DGTR1
+'SAXCB M]
 
 
 
-## Project thoughts
+## Introduction: Introducing Research Question
 
 How did new migration patterns caused by the Russo-Ukrainian war affect inflation in Georgia? In this project, I will be exploring how the increased number of Russian immigrants affected Georgian economy, and especially the inflation rate. From what I have observed in the country, the prices rose greatly while the government proudly publicized the 10% growth rate. I believe that Russians, trying to escape the economic sanctions, brought a lot of cash to Georgia and bought the local currency, Lari. This made Lari stronger compared to the dollar which seemed a positive dynamic. The increased amount of cash in the country did result in some kind of growth, with capital increasing and a new labor force coming into the country, but this stopped at some point. After that, the economy could not catch up with real growth, and more cash circulating resulted in increased prices. 
 
@@ -19,129 +21,119 @@ To check whether this is correct or not, I will need to look at exactly what the
 
 ```{r}
 library(tidyverse)
-library(dplyr)
 library(readxl)
-library(lubridate)
 
-GDP_per_capita <- read_excel("Project_Data/GDP_per_capita.xls")
 
-Nominal_avg_earnings <- read_excel("Project_Data/01_Earnings_annual.xls")
-
-GEL_USD <- read_excel("Project_Data/Table_Rate_AVG.xlsx")
 
 Net_migration <- read_excel("Project_Data/31-net-migration.xlsx")
 
-Migration_citizenship_sex <- read_excel("Project_Data/Migration_citizenship_sex.xlsx")
 
-CPI_base_2010_Geostats_monthly <- read_excel("Project_Data/consumer-price-index-2010=100.xlsx")
+
+
 
 CPI_base_2010_WorldBank <- read_excel("Project_Data/CPI_2010_base.xls")
 
-Foreign_investment <- read_excel("Project_Data/Foreign_direct_investment.xls")
-
-GDP_growth <- read_excel("Project_Data/GDP-growth-annual.xls")
-
 Inflation_annual_rate <- read_excel("Project_Data/Inflation_consumer_prices.xls")
 
-Import_Price_index <- read_excel("Project_Data/IMPORT-Previous-month=100.xlsx")
+
+
+
 ```
 ## Steps to take 
 
-1. Russians are coming in, buying lari, lari gets stronger. _> export and import price index, let's see if exports increased after 2022
+1. Looking at the Russian immigration over time.
 
-1. Create database with monthly data for inflation - DONE
+      - Explaining that there is no monthly data.
 
-2. See the sectoral distriburion of inflation - We should look at how prices change for good vs services. Are the change in prices of imported and locally produced stuff different? 
+2. Looking at how Georgian currency reacted to this processes, or at least how it changed in the same period.
 
-3. Monthly data for immigration - IMPOSSIBLE
+3. The currency strengthened against dollar, visualizing that. 
 
-4. Creating visualizations - DONE
+4. Trying to break down the change in the currency: 
 
-5. Seeing the correlation, maybe writing an analysis - PARTLY
+      - Checking import price index to confirm that strengthening Lari had traditional effects.
+      
+      - We observe that prices on imported goods got cheaper.
+      
+      - What about prices in general?
+      
+5. Visualizing the inflation rate.
 
-6. Controlling for a confounder, maybe global inflation or US inflation or something like that. - LATER
+      - Inflation grows over time.
+      
+      - Since the imported goods got cheaper, we assume that the rise in overall price level should be due to              the growth in the prices of domestically produced goods and services.
+      
+      - What is the reason for this?
+      
+      - First we check the confounders, maybe there was something going on in the world that caused this. Comparing        it to US dollars and its inflationary patters as a dummy for global inflationary environment.
+      
+      - Observing that Lari has inflated more than Dollar, we conclude that there is something happening in the            country that causes this inflation.
+      
+6. Can it be due to Russian immigration? 
+7. Conducting hypothesis test.
 
+      - We will test for independence with permutation test.
+      
+      - Null hypothesis: Inflation rate and Russian immigration are independent.
+      
+      - One-sided (?) alternative hypothesis: Russian immigration caused the inflation rate to rise.
+      
+      - use stat = "correlation"
+      
+      - get_p_value
+      
+      - shade_p_value
+      
+      - compare it to alpha = 0.05
 
-## Visualizing Russian migration over time
+8. Regression, account for US inflation
+
+      - coefficient will tell us how much one-unit increase in independent variable results in the increase of             dependent variable
+      
+      - p-value will tell us the significance of this predictor. The smaller the probability of getting this value in       null, the better. 
+      
+9. Conclusion
+      
+
+## Exploring Independent Variable: Russian Immigration
+
+The Russo-Ukrainian War caused a lot of demographic turmoil in Eastern Europe. Especially after the introduction of sanctions against Russia and Putin's declaration of mass military mobilization in the country, many Russians started emigrating from homeland. Some escaping economic damage and some military service, Russian citizens took refuge in many neighboring countries, including a small republic of Georgia. 
+
+In the graph below, we can observe Russian immigration to Georgia over a few years. These numbers don't reflect Russian citizens who stayed in the country short-term - the graph shows only the people who stayed in Georgia for more than 7 months - so that we can assume that they had enough economic activity to influence our dependent variable of inflation rate. Unfortunately, I could not find monthly data for Russian immigration. Having monthly data would allow me to make more credible claims and observe the relationship better, however for now I will have to rely on the information below due to the lack of reliably structured data.
+
 
 ```{r}
 
-Migration_citizenship_sex |>
+## Loading the data
+
+Migration_citizenship_sex <- read_excel("Project_Data/Migration_citizenship_sex.xlsx")
+
+## Organizing, Visualizing
+
+Immigration_rus <- Migration_citizenship_sex |>
   filter(Citizenship == "Russian Federation",
-         Year > 2019) |>
-  select(Year, Citizenship, Immigrants_total) |>
+         Year > 2016) |>
+  select(Year, Citizenship, Immigrants_total) 
+
+Immigration_rus |>
   ggplot(mapping = aes(x = Year, y = Immigrants_total)) +
   geom_col() +
-  labs(y = "Number of Russian Immigrants")
+  labs(title = "Fig.1 - Russian Immigration to Georgia (2017-2022)",
+      y = "Number of Russian Immigrants")
 
 ```
+Though there is no organized and detailed monthly data for immigration, it is known for sure that the peak of the Russian immigration was in September-October 2022, when Putin declared mobilization in the country. However, this time people came to Georgia mostly to escape military service. Before this, due to the heavy sanctioning of Russia, Georgia experienced an inflow of comparatively wealthy Russians who were trying to save their wealth in unsanctioned countries. Therefore, this first wave of wealthier individuals might have had economic influence as strong as the subsequent inflow of quantity-wise much more citizens. 
 
-Unfortunately, I could not find monthly data for immigration anywhere. This will be a problem for my project, and I might have to change the whole thing, though now, due to time constraints, I didn't have any other choice but leave it as it is.
 
-Though there are no organized and detailed monthly data about it, we know for sure that the peak of the Russian immigration was in September-October 2022, when Putin declared mobilization in the country. However, this was the time when people came to Georgia mostly with motivation of escaping military service. Before this happened the heavy sanctioning of Russia and inflow of comparatively wealthy Russian citizens into Georgia. This first inflow might have had more economic influence on the country since we are talking about bigger amount of cash. 
+## Exploring Dependent Variable: Inflation
 
-Now, let's look at how exchange rates of Georgian currency changed. Russian citizens came into the country with their money in dollars, and in order to settle in the country, they started buying local currency. Buying local currency with dollars would result in strengthening of Lari. Let us check this with monthly exchange rates - GEL/USD.
-
-## Exchange rate GEL/USD over time
+Now, let us look at the dependent variable of interest - Georgian inflation. Happily, I found more detailed, monthly data in this case. The original dataset provided the Consumer Price Index with 2010 as the base year. I changed the base year to 2020 to avoid large effects of very distinct global financial situation around 2010. 
 
 ```{r}
-GEL_USD1 <- GEL_USD |>
-  mutate(Month = match(Month, month.name),
-         date = paste(Year, Month, "01", sep = "-"),
-         date = as.Date(date, format = "%Y-%m-%d")) |>
-  filter(Year > 2019)
 
-ggplot(GEL_USD1, aes(x = date, y = `Avg. Exchange Rate`)) +
-  geom_line() +
-  xlab("") +
-  labs(x = "Year", y = "Avg. Exchange Rate, GEL/USD")
-  
-```
-As we see, the rate is going steeply down in 2022, reaching minimum in the end of the first quarter of 2023. This means that the currency did strengthen, from 1 USD being equal to ~3.4 GEL in 2021 to it equalling ~2.52 GEL in 2023. Though this technically supports my opinion that Lari strengthened while Russians arrived, the graph also shows that the process of strengthening started way before the Russian immigration, so the causes are still to be understood, it should not be only immigration. So far, this works against my initial hypothesis.
+## Loading the data
 
-I'll still continue analysis, I want to see where this will take me.
-
-Since the exchange rates are now in Georgian currency's favor, since it is getting stronger compared to other currencies, it should be cheaper for Georgian population to get imported goods. Now, I will observe the Import Price Index to see how prices on imported goods change in the same time period.
-
-## Import Price Index
-
-```{r}
-Import_Price_index1 <- Import_Price_index |>
-  mutate(Month = match(Month, month.name),
-         date = paste(Year, Month, "01", sep = "-"),
-         date = as.Date(date, format = "%Y-%m-%d"))
-
-Import_Price_index1 |>
-  ggplot(aes(x = date, y = `Import Price`)) +
-  geom_line() +
-  geom_smooth() +
-  xlab("") +
-  labs(x = "Year", y = "Import Price Index")
-  
-```
-This graph looks messy because this Import Price Index takes previous month as a baseline for comparison. However, we can observe some trends here, specifically, if we remember what we saw on the exchange rates chart, we can see that when the exchange rate was low, on its negative peaks, import prices too fall. We can compare the beginning of 2023, for example, prices on imported goods are less because Lari is stronger compared to other currencies and can buy more now. 
-
-We can also check the correlation of exchange rate and import price index. When the rate goes down, Lari gets stronger. If Lari gets stronger, import prices should fall, therefore the index should be reduced too. From this logic, their correlation should be positive, but let's check.
-
-## Correlation of exchange rate and import price index
-
-```{r}
-# Putting these variables into same data
-
-left_join(Import_Price_index1, GEL_USD1, by = c("date", "Year", "Month")) |>
-  summarise(correlation = cor(`Import Price`, `Avg. Exchange Rate`)) |>
-  knitr::kable()
-
-
-```
-Happily, the correlation is ~0.47 - positive, as we were expecting.
-
-Georgia imports a lot of its goods. Such dynamics should have had positive effects on general price levels, however, it is remarkable that people complain about terribly rising prices lately, especially after the war started in Ukraine and Russians came into the country. It will be useful to observe inflation rate in more detail.
-
-
-## Monthly Inflation
-
-```{r}
+CPI_base_2010_Geostats_monthly <- read_excel("Project_Data/consumer-price-index-2010=100.xlsx")
 
 ## Tidying dataset
 
@@ -149,31 +141,165 @@ Inflation <- CPI_base_2010_Geostats_monthly |>
   pivot_longer(names_to = "Month",
                values_to = "Inflation",
                cols = January:December) |>
-  filter(Year > 2019) 
+  filter(Year > 2016) 
 
 Inflation <- Inflation |>
   mutate(Month = match(Month, month.name),
          date = paste(Year, Month, "01", sep = "-"),
          date = as.Date(date, format = "%Y-%m-%d"))
-Inflation
+
+## Changing the base year to 2020
+
+Inflation <- Inflation |>
+  mutate(inf_b_2020 = (Inflation / Inflation[Year == 2020]) * 100)
 
 ## Visualizing
 
-Inflation_p <- ggplot(Inflation, aes(x=date, y=Inflation)) +
-  geom_line() + 
+Inflation_p <- ggplot(Inflation, aes(x=date, y=inf_b_2020)) +
+  geom_line() +
   xlab("") +
-  labs(x = "Year", y = "Inflation Rate")
+  labs(title = "Fig. 2 - Inflation in Georgia (2017-2023)", x = "Year", y = "Inflation Rate", caption = "Consumer Price Index (CPI), base year = 2020")
 
 Inflation_p
 ```
+We see that the overall price level in Georgian economy is rising over time, and the slope is getting steeper after 2021. It is interesting what part of this, if any, is associated with Russian immigration into the country.
 
-Last graphs showed that Lari was getting stronger and the prices on imported goods were decreasing on average. However, instead of this resulting in the decrease in overal price level, the inflation rate graph above shows us that the overal price level grew in Georgian economy. Since imported goods got cheaper, the rise in inflation rate might mean that the prices on domestically produced goods and services rose and pulled the overall level up.
 
-## Prices on domestically produced goods and services
+## Step I: Exchange Rates
 
-...
+According to my hypothesis, the inflationary dynamics were partly caused by the Russian migrants bringing USD to Georgia and using it to purchase GEL, creating excessive cash in the economy when done all at once. 
 
-## Potentially Useful notes
+To check this, the first step would be to look at GEL-USD exchange rates. If Lari was indeed purchased massively during this period, we should see Lari strengthening against US Dollar in this period. 
+
+```{r}
+## Loading the data
+
+GEL_USD <- read_excel("Project_Data/Table_Rate_AVG.xlsx")
+
+## Organizing, Visualizing
+
+GEL_USD1 <- GEL_USD |>
+  mutate(Month = match(Month, month.name),
+         date = paste(Year, Month, "01", sep = "-"),
+         date = as.Date(date, format = "%Y-%m-%d")) |>
+  filter(Year > 2016)
+
+ggplot(GEL_USD1, aes(x = date, y = `Avg. Exchange Rate`)) +
+  geom_line() +
+  xlab("") +
+  labs(title = "Fig. 3 - Average Exchange Rate GEL/USD (2017-2023)", x = "Year", y = "Avg. Exchange Rate, GEL/USD")
+  
+```
+As we see, the GEL/USD ratio is indeed steeply going down in 2022, reaching minimum in the end of the first quarter of 2023. This means that the currency did strengthen, from 1 USD being equal to ~3.4 GEL in 2021 to it equaling ~2.52 GEL in 2023. Technically, it is possible that this happened due to the Russian immigration, but we have to keep in mind that GEL strengthening starts in 2021, as per the graph. It is hard to attribute such a big process of currency strengthening to one single factor, especially without controlling for possible confounders. So, I will not base any strong opinions on this evidence. There seems to be something else also that started to cause GEL strengthening in 2021. 
+
+## Step II: Import Price Index
+
+To follow the storyline, it would be beneficial to check the prices on imports. Since Lari is getting stronger starting from 2021, it should be cheaper for the country to purchase goods and services produced abroad. To test for this, we are checking the import price index, which reflects the price level of imported goods and services.
+
+Every point in this data takes the same month of the previous year as a baseline for comparison. This was the most suitable dataset I could find for such case. 
+
+```{r}
+## Loading the data
+
+Import_Price_index <- read_excel("Project_Data/IMPORT-Same-month-of-the-previous-year=100.xlsx")
+
+## Organizing, Visualizing
+
+Import_Price_index1 <- Import_Price_index |>
+  mutate(Month = match(Month, month.name),
+         date = paste(Year, Month, "01", sep = "-"),
+         date = as.Date(date, format = "%Y-%m-%d"))
+
+Import_Price_index1 |>
+  ggplot(aes(x = date, y = `Import Price Index`)) +
+  geom_line() +
+  xlab("") +
+  labs(title = "Fig. 4 - Import Price Index in Georgia (2017-2023)", x = "Year", y = "Import Price Index",
+       caption = "Base = same month of the previous year")
+  
+```
+Indeed Fig. 4 confirms that the prices on imported goods decreased at the very time exchange rate was changing in GEL's favor. Georgia imports a lot of its goods, so we would expect this to have had positive effect on the overall price level; however, as we remember from Fig. 2, the overall price level in the economy - the CPI - was rising at this time. This rise in inflation rate might mean that the prices on domestically produced goods and services rose and pulled the overall level up.
+
+Let us look at the inflation rate in more detail.
+
+
+## Step III: Global Inflationary Environment
+
+When trying to understand the possible causes of inflation, there is a lot to keep in mind. Inflation can be affected by a lot of things which are terribly hard to control for, especially for a developing country like Georgia. To at least reduce the "noise" all these factors might be creating, it will be helpful to picture how Georgian inflation fit into the global inflationary environment at a time. By observing this, we will be able to deduct some global trends that took place and focus only on the dynamics that were specific for Georgian case. 
+
+US inflation rate will serve as a good proxy for global inflation due to its leading role in world economics. Let us visualize US and Georgian inflation rates on the same plane. 
+
+This dataset takes 1983 as a base year, which I will change to 2020, just like in Georgian dataset.
+
+```{r}
+## Loading the data
+
+US_Inflation <- read_excel("Project_Data/CPIAUCNS.xls")
+
+## Changing the base year, Organizing
+
+US_Inflation <- US_Inflation |>
+  mutate(cpi_b_2020 = (CPI / CPI[Year == 2020]) * 100) |>
+  filter(Year > 2016) |>
+  select(-date) |>
+  mutate(Month = match(Month, month.name),
+         date = paste(Year, Month, "01", sep = "-"),
+         date = as.Date(date, format = "%Y-%m-%d"))
+
+## Joining Datasets with US and Georgian Inflation, Visualizing
+
+left_join(Inflation, US_Inflation, by = c("date", "Year", "Month")) |>
+  select(-Inflation, -CPI) |>
+  rename(GEO = inf_b_2020,
+         US = cpi_b_2020) |>
+  ggplot(mapping = aes(x = date)) +
+  geom_line(aes(y = GEO, color = "red")) +
+  geom_line(aes(y = US, color = "blue")) +
+  labs(title = "Fig. 5 - Contrasting Georgian and US Inflation Rates (2017-2023)",
+       x = "Year",
+       y = "Inflation Rate",
+       caption = "CPI, Base = 2020")  ## Figure out how to change the names for colors in legend
+```
+Fig. 5 shows that the direction and pattern of Georgian and US inflation rates is quite similar. So, Georgia indeed is following some global inflationary tendencies. However, we also see that there is a lot of space between the two graphs - there is something else going on in Georgia that causes the inflation to be much worse at any point in time. I want to test whether this could be because of Russian immigration. For this, I will use 2 methods: linear regression and hypothesis testing.
+
+## Step IV: Linear Regression ????
+
+To conduct linear regression, I will need to put inflation and immigration variables in one dataset.
+
+```{r}
+
+## Joining the datasets
+
+Inflation_adj <- Inflation |>
+  group_by(Year) |>
+  summarize(Inflation_annual = mean(Inflation)) |>
+  drop_na()
+
+Infl_Imm <- left_join(Inflation_adj, Immigration_rus, by = "Year") |>
+  select(-Citizenship)
+
+## Running Regression
+
+lm(Inflation_annual ~ Immigrants_total, data = Infl_Imm) |>
+modelsummary::modelsummary(statistic = c("s.e. = {std.error}",
+                                         "p = {p.value}"),
+                           gof_map = c("nobs", "r.squared", "adj.r.squared"))
+```
+
+## Step V: Hypothesis Test
+
+We will use hypothesis test to evaluate the relationship between inflation and immigration, to understand whether they are independent or not. By using the permutation test, we will assume at first that they are independent. This will be our null hypothesis. Our alternative hypothesis will be that increase in immigration leads to the increase in inflation rate. The test will give us the p-value, showing what is the probability of having this test statistic if null hypothesis is true. If the p-value is lower than 0.05, as standard, I will reject null hypothesis. So, my alpha will be 0.05.
+
+```{r}
+
+Inflation_adj |>
+  specify(Inflation_annual ~ Immigrants_total) |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "correlation")
+
+```
+
 
 ## Creating database with economic growth, inflation rate, and Russian immigration
 
@@ -305,6 +431,20 @@ Avg_migration_by_citizenship <- Migration_citizenship_sex |>
               values_from = mean_immigration)
 ```
 
+## Notes
+
+We can also check the correlation of exchange rate and import price index. When the rate goes down, Lari gets stronger. If Lari gets stronger, import prices should fall, therefore the index should be reduced too. From this logic, their correlation should be positive.
+
+```{r}
+# Putting these variables into the same tibble and summarizing correlation
+
+left_join(Import_Price_index1, GEL_USD1, by = c("date", "Year", "Month")) |>
+  summarise(Correlation = cor(`Import Price Index`, `Avg. Exchange Rate`)) |>
+  knitr::kable()
+
+
+```
+Happily, the correlation is ~0.47 - positive, as we were expecting.
 
 
 
